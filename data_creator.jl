@@ -20,23 +20,19 @@ names = CSV.File("seed_data/names.csv") |> DataFrame!
 lives = Dict()
 for (i, row) in enumerate(eachrow(names))
     lives[i*2-1] = (
-        name =  row.name_m .* row.last_name,
+        name =  row.name_m .* " " .* row.last_name,
         birthday = rand(Date(1920,1,1):Day(1):Date(1999,12,31)),
         sex = :M,
         risk = rand([:Preferred,:Standard]),
         smoke = rand(Bool),
         )
     lives[i*2] = (
-        name = row.name_f .* row.last_name,
+        name = row.name_f .* " " .* row.last_name,
         birthday = lives[i*2-1].birthday + Day(rand(-365*10:365*10)), # set the partner to be +/- 10 years old
         sex = :F,
         risk = rand([:Preferred,:Standard]),
         smoke = rand(Bool),
     )
-        
-        
-        
-
 end
 n_lives = length(lives)
 
@@ -53,12 +49,14 @@ policies = map(1:n_policies) do id
         joint = joint,
         
         life1_id = id1,
+        life1_name = lives[id1].name,
         life1_sex = lives[id1].sex,
         life1_risk = lives[id1].risk,
         life1_smoke = lives[id1].smoke,
         life1_birthday = lives[id1].birthday,
 
         life2_id = joint ? id2 : nothing,
+        life2_name = joint ? lives[id2].name : nothing,
         life2_sex = joint ? lives[id2].sex : nothing,
         life2_risk = joint ? lives[id2].risk : nothing,
         life2_smoke = joint ? lives[id2].smoke : nothing,
